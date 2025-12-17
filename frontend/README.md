@@ -24,7 +24,7 @@ Esta aplicación permite **gestionar contactos de forma intuitiva**, con funcion
 npm install
 ```
 
-4. Debe cambiar el nombre de .env.example por .env. para poder conectarse con el backend
+2. Debe cambiar el nombre de .env.example por .env. para poder conectarse con el backend
 
 3. Ejecuta el siguiente scripts personalizado para correr el backend en desarrollo
 
