@@ -1,24 +1,27 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { CircularProgress, Container, Stack, Typography } from "@mui/material";
+import {
+  Container,
+  Stack,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 
 import ContactsToolbar from "./components/ContactsToolbar";
 import ContactsTable from "./components/ContactsTable";
 import ContactFormDialog from "./components/ContactFormDialog";
 import DeleteConfirmDialog from "./components/DeleteConfirmDialog";
 import AppSnackbar from "./components/AppSnackbar";
-
-// Ajusta este import a tu proyecto:
 import { ContactsService } from "@/services/contacts.services";
 
-function normalizeList(payload: any) {
-  if (Array.isArray(payload)) return payload;
-  if (payload?.contacts && Array.isArray(payload.contacts))
-    return payload.contacts;
-  if (payload?.data && Array.isArray(payload.data)) return payload.data;
-  if (payload?.rows && Array.isArray(payload.rows)) return payload.rows;
-  return [];
+function extractList(data: any): any[] {
+  return (
+    data?.contacts ||
+    data?.data ||
+    data?.rows ||
+    (Array.isArray(data) ? data : [])
+  );
 }
 
 export default function ContactsPage() {
@@ -29,30 +32,30 @@ export default function ContactsPage() {
   const [snack, setSnack] = useState({
     open: false,
     message: "",
-    severity: "info" as any,
+    severity: "info" as "info" | "success" | "error" | "warning",
   });
 
-  // form
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
 
-  // delete
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [toDelete, setToDelete] = useState<any | null>(null);
 
-  const showSnack = (severity: any, message: string) =>
+  const showMessage = (severity: typeof snack.severity, message: string) =>
     setSnack({ open: true, severity, message });
-  const closeSnack = () => setSnack((s) => ({ ...s, open: false }));
+  const closeMessage = () => setSnack((s) => ({ ...s, open: false }));
 
   const fetchContacts = async () => {
     setLoading(true);
     try {
-      const res = await ContactsService.list();
-      setContacts(normalizeList(res));
-    } catch (e: any) {
-      showSnack(
+      const response = await ContactsService.list();
+      setContacts(extractList(response));
+    } catch (err: any) {
+      showMessage(
         "error",
-        e?.response?.data?.message || e?.message || "Error cargando contactos"
+        err?.response?.data?.message ||
+          err?.message ||
+          "No se pudieron cargar los contactos."
       );
     } finally {
       setLoading(false);
@@ -60,110 +63,98 @@ export default function ContactsPage() {
   };
 
   useEffect(() => {
-    void fetchContacts();
+    fetchContacts();
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return contacts;
+  const filteredContacts = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return contacts;
 
     return contacts.filter((c) => {
-      const a = String(c?.name ?? "").toLowerCase();
-      const b = String(c?.email ?? "").toLowerCase();
-      const d = String(c?.phone ?? "").toLowerCase();
-      const f = String(c?.company ?? "").toLowerCase();
-      return a.includes(q) || b.includes(q) || d.includes(q) || f.includes(q);
+      const fields = [c.name, c.email, c.phone, c.company];
+      return fields.some((f) => String(f ?? "").toLowerCase().includes(term));
     });
   }, [contacts, search]);
 
-  const openCreate = () => {
+  const handleCreate = () => {
     setEditing(null);
     setFormOpen(true);
   };
 
-  const openEdit = (c: any) => {
-    setEditing(c);
+  const handleEdit = (contact: any) => {
+    setEditing(contact);
     setFormOpen(true);
   };
 
-  const closeForm = () => setFormOpen(false);
+  const handleFormClose = () => setFormOpen(false);
 
-  // RHF manda values
-  const submitForm = async (values: any) => {
-    const name = String(values?.name ?? "").trim();
-    const email = String(values?.email ?? "").trim();
-    const phone = String(values?.phone ?? "").trim();
-    const company = String(values?.company ?? "").trim();
+  const handleSubmit = async (values: any) => {
+    const { name, email, phone, company } = values;
 
-    if (!name) return showSnack("error", "El nombre es obligatorio.");
-    if (!email) return showSnack("error", "El email es obligatorio.");
-    if (!phone) return showSnack("error", "El teléfono es obligatorio.");
-
-    const payload: any = { name, email, phone };
-
-    if (editing?.id) {
-      // UPDATE
-      payload.company = company || null;
-    } else {
-      // CREATE
-      if (company) payload.company = company;
+    if (!name?.trim() || !email?.trim() || !phone?.trim()) {
+      return showMessage("error", "Nombre, email y teléfono son obligatorios.");
     }
+
+    const payload = {
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      company: company?.trim() || null,
+    };
 
     try {
       if (editing?.id) {
         await ContactsService.update(editing.id, payload);
-        showSnack("success", "Contacto actualizado.");
+        showMessage("success", "Contacto actualizado.");
       } else {
         await ContactsService.create(payload);
-        showSnack("success", "Contacto creado.");
+        showMessage("success", "Contacto creado.");
       }
 
-      closeForm();
+      handleFormClose();
       await fetchContacts();
-    } catch (e: any) {
+    } catch (err: any) {
       const msg =
-        e?.response?.data?.errors?.[0]?.msg ||
-        e?.response?.data?.message ||
-        e?.message ||
-        "Error guardando contacto";
-
-      showSnack("error", msg);
+        err?.response?.data?.errors?.[0]?.msg ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Error al guardar el contacto.";
+      showMessage("error", msg);
     }
   };
 
-  const openDeleteConfirm = (c: any) => {
-    setToDelete(c);
+  const handleDeleteConfirm = (contact: any) => {
+    setToDelete(contact);
     setDeleteOpen(true);
   };
 
-  const closeDelete = () => setDeleteOpen(false);
+  const handleDeleteCancel = () => setDeleteOpen(false);
 
-  const confirmDelete = async () => {
+  const handleDelete = async () => {
     if (!toDelete?.id) return;
     try {
       await ContactsService.remove(toDelete.id);
-      showSnack("success", "Contacto eliminado.");
-      closeDelete();
+      showMessage("success", "Contacto eliminado.");
+      handleDeleteCancel();
       await fetchContacts();
-    } catch (e: any) {
+    } catch (err: any) {
       const msg =
-        e?.response?.data?.errors?.[0]?.msg ||
-        e?.response?.data?.message ||
-        e?.message ||
-        "Error guardando contacto";
-
-      showSnack("error", msg);
+        err?.response?.data?.errors?.[0]?.msg ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "No se pudo eliminar el contacto.";
+      showMessage("error", msg);
     }
   };
 
   return (
-    <Container sx={{ py: 4,  }}>
+    <Container sx={{ py: 4 }}>
       <Stack spacing={2}>
         <Typography
           variant="h4"
-          fontWeight={700}
           align="center"
-          sx={{ letterSpacing: 0.5, mb: 2, color: "white" }}
+          fontWeight={700}
+          sx={{ color: "white", mb: 2, letterSpacing: 0.5 }}
         >
           Dirección de Contactos
         </Typography>
@@ -171,7 +162,7 @@ export default function ContactsPage() {
         <ContactsToolbar
           search={search}
           setSearch={setSearch}
-          onCreate={openCreate}
+          onCreate={handleCreate}
         />
 
         {loading ? (
@@ -180,10 +171,10 @@ export default function ContactsPage() {
           </Stack>
         ) : (
           <ContactsTable
+            contacts={filteredContacts}
             loading={loading}
-            contacts={filtered}
-            onEdit={openEdit}
-            onDelete={openDeleteConfirm}
+            onEdit={handleEdit}
+            onDelete={handleDeleteConfirm}
           />
         )}
       </Stack>
@@ -191,22 +182,22 @@ export default function ContactsPage() {
       <ContactFormDialog
         open={formOpen}
         editing={editing}
-        onClose={closeForm}
-        onSubmit={submitForm}
+        onClose={handleFormClose}
+        onSubmit={handleSubmit}
       />
 
       <DeleteConfirmDialog
         open={deleteOpen}
         contact={toDelete}
-        onClose={closeDelete}
-        onConfirm={confirmDelete}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDelete}
       />
 
       <AppSnackbar
         open={snack.open}
         message={snack.message}
         severity={snack.severity}
-        onClose={closeSnack}
+        onClose={closeMessage}
       />
     </Container>
   );
