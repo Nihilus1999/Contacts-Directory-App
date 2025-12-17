@@ -121,10 +121,13 @@ export default function ContactsPage() {
       closeForm();
       await fetchContacts();
     } catch (e: any) {
-      showSnack(
-        "error",
-        e?.response?.data?.message || e?.message || "Error guardando contacto"
-      );
+      const msg =
+        e?.response?.data?.errors?.[0]?.msg ||
+        e?.response?.data?.message ||
+        e?.message ||
+        "Error guardando contacto";
+
+      showSnack("error", msg);
     }
   };
 
@@ -143,21 +146,24 @@ export default function ContactsPage() {
       closeDelete();
       await fetchContacts();
     } catch (e: any) {
-      showSnack(
-        "error",
-        e?.response?.data?.message || e?.message || "Error eliminando contacto"
-      );
+      const msg =
+        e?.response?.data?.errors?.[0]?.msg ||
+        e?.response?.data?.message ||
+        e?.message ||
+        "Error guardando contacto";
+
+      showSnack("error", msg);
     }
   };
 
   return (
-    <Container sx={{ py: 4 }}>
+    <Container sx={{ py: 4,  }}>
       <Stack spacing={2}>
         <Typography
           variant="h4"
           fontWeight={700}
           align="center"
-          sx={{ letterSpacing: 0.5 }}
+          sx={{ letterSpacing: 0.5, mb: 2, color: "white" }}
         >
           Dirección de Contactos
         </Typography>

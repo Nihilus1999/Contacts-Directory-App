@@ -1,21 +1,21 @@
-'use client'
+"use client";
 
-import { Button, Stack, TextField, InputAdornment } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
-import AddIcon from '@mui/icons-material/Add'
+import { Button, Stack, TextField, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function ContactsToolbar({
   search,
   setSearch,
   onCreate,
 }: {
-  search: string
-  setSearch: (v: string) => void
-  onCreate: () => void
+  search: string;
+  setSearch: (v: string) => void;
+  onCreate: () => void;
 }) {
   return (
     <Stack
-      direction={{ xs: 'column', sm: 'row' }}
+      direction={{ xs: "column", sm: "row" }}
       spacing={2}
       alignItems="center"
     >
@@ -28,14 +28,13 @@ export default function ContactsToolbar({
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon color="action" />
+              <SearchIcon />
             </InputAdornment>
           ),
         }}
         sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 2,
-          },
+          backgroundColor: "white",
+          borderRadius: 2,
         }}
       />
 
@@ -44,7 +43,7 @@ export default function ContactsToolbar({
         startIcon={<AddIcon />}
         onClick={onCreate}
         sx={{
-          whiteSpace: 'nowrap',
+          whiteSpace: "nowrap",
           borderRadius: 2,
           px: 3,
         }}
@@ -52,5 +51,5 @@ export default function ContactsToolbar({
         Nuevo
       </Button>
     </Stack>
-  )
+  );
 }
