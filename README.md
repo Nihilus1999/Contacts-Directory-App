@@ -1,4 +1,4 @@
-# 📇 Contacts Directions App
+# 📇 Contacts Directory App
 
 Aplicación web para la **gestión de contactos**, que permite crear, consultar, actualizar, eliminar y buscar contactos de forma rápida y sencilla.
 
