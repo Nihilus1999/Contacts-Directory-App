@@ -1,20 +1,20 @@
 'use client'
 
-import { ThemeProvider, CssBaseline, createTheme } from '@mui/material'
 import { ReactNode } from 'react'
+import { ThemeProvider, CssBaseline, createTheme } from '@mui/material'
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 
 const theme = createTheme({
-  palette: {
-    mode: 'light',
-    // luego puedes personalizar colores
-  },
+  palette: { mode: 'light' },
 })
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
+    <AppRouterCacheProvider options={{ key: 'mui' }}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
+    </AppRouterCacheProvider>
   )
 }

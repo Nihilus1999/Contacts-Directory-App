@@ -10,14 +10,17 @@
     "frontend": "next dev"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
+    "@mui/material-nextjs": "^7.3.6",
     "axios": "^1.13.2",
     "next": "16.0.10",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "react-hook-form": "^7.68.0"
   },
   "devDependencies": {
     "@types/node": "^20",
