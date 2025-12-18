@@ -5,10 +5,7 @@ export type ContactCreateDTO = Omit<Contact, 'id'>
 export type ContactUpdateDTO = Omit<Contact, 'id'>
 
 function normalizeContacts(payload: unknown): Contact[] {
-  // Caso 1: ya es un array
   if (Array.isArray(payload)) return payload as Contact[]
-
-  // Caso 2: viene envuelto
   if (payload && typeof payload === 'object') {
     const obj = payload as Record<string, unknown>
 
