@@ -1,7 +1,7 @@
 import { Box, Button, Paper, Stack, Typography } from '@mui/material'
 import Link from 'next/link'
 
-export default function HomePage() {
+export default function page() {
   return (
     <Box
       sx={{
