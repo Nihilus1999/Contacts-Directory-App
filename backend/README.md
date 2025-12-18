@@ -1,4 +1,4 @@
-# 📇 Contacts API — Backend
+# Contacts Directory — Backend
 
 Backend REST API desarrollada con **Node.js**, **Express** y **Sequelize**, utilizando **PostgreSQL** como base de datos.  
 Este proyecto gestiona contactos con funcionalidades de **CRUD**, **búsqueda avanzada**, **validaciones**, **transacciones**, y una arquitectura organizada siguiendo buenas prácticas profesionales.
