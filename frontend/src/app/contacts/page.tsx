@@ -156,7 +156,7 @@ export default function ContactsPage() {
           fontWeight={700}
           sx={{ color: "white", mb: 2, letterSpacing: 0.5 }}
         >
-          Dirección de Contactos
+          Directorio de Contactos
         </Typography>
 
         <ContactsToolbar

@@ -31,3 +31,20 @@ npm install
 ```
 npm run frontend
 ```
+## 🛠️ Interfaces del frontend
+
+Pagina principal con tabla de los contactos
+
+![alt text](image.png)
+
+Creacion de los contactos
+
+![alt text](image-1.png)
+
+Edicion de los contactos
+
+![alt text](image-2.png)
+
+Mensaje de eliminacion de contacto
+
+![alt text](image-3.png)
