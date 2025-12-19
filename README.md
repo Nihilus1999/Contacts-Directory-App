@@ -15,8 +15,12 @@ Cada parte del proyecto cuenta con su propia documentación:
   - Pasos de instalación
   - Configuración de variables de entorno
 
+En el terminal puedes escribir **cd backend** para entrar directamente a esa ruta
+
 - 🎨 **Frontend**  
   Dentro de la carpeta `frontend/` encontrarás un archivo `README.md` con:
   - Pasos de instalación
   - Configuración de entorno
   - Forma de ejecutar la aplicación
+
+En el terminal puedes escribir **cd frontend** para entrar directamente a esa ruta
